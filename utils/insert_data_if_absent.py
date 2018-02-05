@@ -11,6 +11,24 @@ from fame.core.config import Config
 from fame.core.internals import Internals
 from fame.common.config import fame_config
 
+def add_community_repository():
+    from fame.core.repository import Repository
+
+    repo = Repository.get(name="community")
+
+    if repo:
+        print "[+] Community repository already installed."
+    else:
+        print "[+] Installing community repository ..."
+        repo = Repository({
+            'name': 'community',
+            'address': 'https://github.com/certsocietegenerale/fame_modules.git',
+            'private': False,
+            'status': 'cloning'
+        })
+        repo.save()
+        repo.do_clone()
+
 
 def create_single_user_account():
     if fame_config.auth == "single_user":
@@ -76,4 +94,5 @@ def create_initial_data():
 if __name__ == '__main__':
     fame_init()
     create_initial_data()
+    add_community_repository()
     print "[+] Created initial data."
