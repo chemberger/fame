@@ -11,22 +11,29 @@ from web.views.helpers import prevent_csrf
 
 auth = Blueprint('auth', __name__, template_folder='templates')
 
+def create_admin():
+    create_user( "admin", "admin@fame", ['admin', '*'], ['admin'], ['*'])
 
-def create_user():
+    return True
+
+def create_user(name, email, groups, sharing, permissions):
     from fame.core.store import store
+
+    user = User.get(email=email)
     if not store.users.count():
         user = User({
-            'name': "admin",
-            'email': "admin@fame",
-            'groups': ['admin','*'],
-            'default_sharing' : ['admin'],
-            'permissions': ['*'],
+            'name': name,
+            'email': email,
+            'groups': groups,
+            'default_sharing' : sharing,
+            'permissions': premissions,
             'enabled': True
         })
         user.save()
         user.generate_avatar()
 
-    return True
+    return user['api_key']
+
 
 
 @auth.route('/login', methods=['GET', 'POST'])
